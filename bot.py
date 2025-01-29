@@ -15,6 +15,16 @@ def print_stat(arr):
         res += f"{i[0]} : {i[1] / 60:.2f} минут\n"
     return res
 
+@dp.message(lambda message: message.text and message.text.lower() == 'status')
+async def print_status(message: types.Message):
+    await message.answer(print_stat(arr))
+
+@dp.message(lambda message: message.text and message.text.lower() == 'stop')
+async def print_status(message: types.Message):
+    global current 
+    current = []
+    await message.answer(print_stat(arr))
+
 @dp.message()
 async def answer(message: types.Message):
     global current 
@@ -25,9 +35,11 @@ async def answer(message: types.Message):
             arr[current[0]] = time.time() - current[1]
     current = [message.text, time.time()]
 
-    if message.text == "stop":
-        current = []
-        await message.answer(print_stat(arr))
+    # if message.text == "stop":
+    #     current = []
+    #     await message.answer(print_stat(arr))
+    # if message.text == "status":
+    #     await message.answer(print_stat(arr))
 
 async def main():
     await dp.start_polling(bot)
