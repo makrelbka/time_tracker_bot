@@ -54,7 +54,7 @@ async def print_stat(arr):
         res += f"{i[0]} : {i[1] / 60:.2f} минут\n"
     return res
 
-@dp.message_handler()
+@dp.message()
 async def answer(message: types.Message):
     user_id = message.from_user.id
     current = read_save(user_id)
