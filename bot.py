@@ -31,15 +31,15 @@ def read_save(user_id):
 
     return data.get(user_id, ProcessData())
 
-def edit_save(user_id, current_data):
+def edit_save(user_id, current):
     if os.path.exists('save.pickle') and os.path.getsize('save.pickle') > 0:
         with open('save.pickle', 'rb') as f:
             data = pickle.load(f)
     else:
         data = {}
 
-    data[user_id] = current_data
-    
+    data[user_id] = current
+    print(current.arr)
     with open('save.pickle', 'wb') as f:
         pickle.dump(data, f)
 
