@@ -17,7 +17,7 @@ def print_stat(arr):
 
 @dp.message()
 async def answer(message: types.Message):
-    global current  # Добавляем глобальную переменную
+    global current 
     if current:
         if current[0] in arr:
             arr[current[0]] += time.time() - current[1]
@@ -26,6 +26,7 @@ async def answer(message: types.Message):
     current = [message.text, time.time()]
 
     if message.text == "stop":
+        current = []
         await message.answer(print_stat(arr))
 
 async def main():
