@@ -10,8 +10,10 @@ class ProcessData:
         self.process_name = ""
         self.start_time = 0
         self.process_date = ""
+        self.arr = {}
 
     def clear(self):
+        self.arr = {}
         self.process_name = ""
         self.start_time = 0
         self.process_date = ""
@@ -20,7 +22,6 @@ class ProcessData:
 TOKEN = "7430942828:AAFX_RRZlXp7KsuTsyvCtS3V2n0HMVhf-_c"
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
-arr = {}
 
 def read_save(user_id):
     if not os.path.exists('save.pickle') or os.path.getsize('save.pickle') == 0:
@@ -43,8 +44,11 @@ def edit_save(user_id, current_data):
     with open('save.pickle', 'wb') as f:
         pickle.dump(data, f)
 
-def print_stat(arr):
+async def print_stat(arr):
     res = ""
+    if not arr: 
+        return "Нет данных для отображения."
+    
     arr = sorted(arr.items(), key=lambda item: item[1], reverse=True)
     for i in arr:
         res += f"{i[0]} : {i[1] / 60:.2f} минут\n"
@@ -56,17 +60,17 @@ async def answer(message: types.Message):
     current = read_save(user_id)
 
     if current.process_name:
-        if current.process_name in arr:
-            arr[current.process_name] += (datetime.datetime.now() - current.start_time).total_seconds()
+        if current.process_name in current.arr:
+            current.arr[current.process_name] += (datetime.datetime.now() - current.start_time).total_seconds()
         else:
-            arr[current.process_name] = (datetime.datetime.now() - current.start_time).total_seconds()
+            current.arr[current.process_name] = (datetime.datetime.now() - current.start_time).total_seconds()
 
     if message.text == "stop":
         current.clear()
         edit_save(user_id, current)
-        await message.answer(print_stat(arr))
+        await message.answer(print_stat(current.arr))
     elif message.text == "status":
-        await message.answer(print_stat(arr))
+        await message.answer(print_stat(current.arr))
 
     edit_save(user_id, current)
 
