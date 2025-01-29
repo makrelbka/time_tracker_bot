@@ -12,7 +12,6 @@ class ProcessData:
         self.arr = {}
 
     def clear(self):
-        self.arr = {}
         self.process_name = ""
         self.start_time = time.time()
         self.process_date = ""
@@ -64,14 +63,18 @@ async def answer(message: types.Message):
         else:
             current.arr[current.process_name] = time.time() - current.start_time
     print(current.arr)
-    current.process_name = message.text
-    current.start_time = time.time()
+    
     if message.text == "stop":
         current.clear()
         edit_save(user_id, current)
-        await message.answer(await print_stat(current.arr))  
+        await message.answer(await print_stat(current.arr)) 
+        return 
     elif message.text == "status":
         await message.answer(await print_stat(current.arr))
+        return 
+    
+    current.process_name = message.text
+    current.start_time = time.time()
 
     edit_save(user_id, current)
 
