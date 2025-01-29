@@ -39,7 +39,7 @@ def edit_save(user_id, current):
         data = {}
 
     data[user_id] = current
-    print(current.arr)
+    print("|", current.arr)
     with open('save.pickle', 'wb') as f:
         pickle.dump(data, f)
 
@@ -63,7 +63,7 @@ async def answer(message: types.Message):
             current.arr[current.process_name] += (datetime.datetime.now() - current.start_time).total_seconds()
         else:
             current.arr[current.process_name] = (datetime.datetime.now() - current.start_time).total_seconds()
-
+    print(current.arr)
     if message.text == "stop":
         current.clear()
         edit_save(user_id, current)
