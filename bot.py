@@ -64,6 +64,7 @@ async def answer(message: types.Message):
         else:
             current.arr[current.process_name] = (datetime.datetime.now() - current.start_time).total_seconds()
     print(current.arr)
+    current = [message.text, datetime.time()]
     if message.text == "stop":
         current.clear()
         edit_save(user_id, current)
