@@ -4,7 +4,6 @@ import datetime
 import pickle
 import os
 
-# Структура для хранения информации о процессе
 class ProcessData:
     def __init__(self):
         self.process_name = ""
@@ -68,12 +67,11 @@ async def answer(message: types.Message):
     if message.text == "stop":
         current.clear()
         edit_save(user_id, current)
-        await message.answer(print_stat(current.arr))
+        await message.answer(await print_stat(current.arr))  
     elif message.text == "status":
-        await message.answer(print_stat(current.arr))
+        await message.answer(await print_stat(current.arr))
 
     edit_save(user_id, current)
-
 
 async def main():
     await dp.start_polling(bot)
