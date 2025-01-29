@@ -1,12 +1,47 @@
 import asyncio
-import time
 from aiogram import Bot, Dispatcher, types
+import datetime
+import pickle
+import os
+
+# Структура для хранения информации о процессе
+class ProcessData:
+    def __init__(self):
+        self.process_name = ""
+        self.start_time = 0
+        self.process_date = ""
+
+    def clear(self):
+        self.process_name = ""
+        self.start_time = 0
+        self.process_date = ""
+
 
 TOKEN = "7430942828:AAFX_RRZlXp7KsuTsyvCtS3V2n0HMVhf-_c"
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 arr = {}
-current = []
+
+def read_save(user_id):
+    if not os.path.exists('save.pickle') or os.path.getsize('save.pickle') == 0:
+        return ProcessData()
+    
+    with open('save.pickle', 'rb') as f:
+        data = pickle.load(f)
+
+    return data.get(user_id, ProcessData())
+
+def edit_save(user_id, current_data):
+    if os.path.exists('save.pickle') and os.path.getsize('save.pickle') > 0:
+        with open('save.pickle', 'rb') as f:
+            data = pickle.load(f)
+    else:
+        data = {}
+
+    data[user_id] = current_data
+    
+    with open('save.pickle', 'wb') as f:
+        pickle.dump(data, f)
 
 def print_stat(arr):
     res = ""
@@ -15,31 +50,26 @@ def print_stat(arr):
         res += f"{i[0]} : {i[1] / 60:.2f} минут\n"
     return res
 
-@dp.message(lambda message: message.text and message.text.lower() == 'status')
-async def print_status(message: types.Message):
-    await message.answer(print_stat(arr))
-
-@dp.message(lambda message: message.text and message.text.lower() == 'stop')
-async def print_status(message: types.Message):
-    global current 
-    current = []
-    await message.answer(print_stat(arr))
-
-@dp.message()
+@dp.message_handler()
 async def answer(message: types.Message):
-    global current 
-    if current:
-        if current[0] in arr:
-            arr[current[0]] += time.time() - current[1]
-        else:
-            arr[current[0]] = time.time() - current[1]
-    current = [message.text, time.time()]
+    user_id = message.from_user.id
+    current = read_save(user_id)
 
-    # if message.text == "stop":
-    #     current = []
-    #     await message.answer(print_stat(arr))
-    # if message.text == "status":
-    #     await message.answer(print_stat(arr))
+    if current.process_name:
+        if current.process_name in arr:
+            arr[current.process_name] += (datetime.datetime.now() - current.start_time).total_seconds()
+        else:
+            arr[current.process_name] = (datetime.datetime.now() - current.start_time).total_seconds()
+
+    if message.text == "stop":
+        current.clear()
+        edit_save(user_id, current)
+        await message.answer(print_stat(arr))
+    elif message.text == "status":
+        await message.answer(print_stat(arr))
+
+    edit_save(user_id, current)
+
 
 async def main():
     await dp.start_polling(bot)
