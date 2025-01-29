@@ -7,14 +7,14 @@ import os
 class ProcessData:
     def __init__(self):
         self.process_name = ""
-        self.start_time = 0
+        self.start_time = bool()
         self.process_date = ""
         self.arr = {}
 
     def clear(self):
         self.arr = {}
         self.process_name = ""
-        self.start_time = 0
+        self.start_time = bool()
         self.process_date = ""
 
 
