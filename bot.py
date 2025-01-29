@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import Bot, Dispatcher, types
-import datetime
+import time
 import pickle
 import os
 
@@ -60,12 +60,12 @@ async def answer(message: types.Message):
 
     if current.process_name:
         if current.process_name in current.arr:
-            current.arr[current.process_name] += (datetime.datetime.now() - current.start_time).total_seconds()
+            current.arr[current.process_name] += time.time() - current.start_time
         else:
-            current.arr[current.process_name] = (datetime.datetime.now() - current.start_time).total_seconds()
+            current.arr[current.process_name] = time.time() - current.start_time
     print(current.arr)
     current.process_name = message.text
-    current.start_time = datetime.time()
+    current.start_time = time.time()
     if message.text == "stop":
         current.clear()
         edit_save(user_id, current)
