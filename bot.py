@@ -36,10 +36,11 @@ def edit_save(user_id, arr, current):
         pickle.dump(data, f)
 
 async def print_stat(arr):
-    res = ""
-    arr = sorted(arr.items(), key=lambda item: item[1].start_time(), reverse=True)
-    for name, process in arr:
-        res += f"{name} : {process.start_time():.2f} минут\n"
+    if not arr:
+        return "Нет данных для отображения."
+
+    sorted_items = sorted(arr.items(), key=lambda x: x[1].start_time, reverse=True)
+    res = "\n".join([f"{name}" for name, _ in sorted_items])
     return res
 
 @dp.message(lambda message: message.text.lower() == "stop")
