@@ -37,9 +37,9 @@ def edit_save(user_id, arr, current):
 
 async def print_stat(arr):
     res = ""
-    arr = sorted(arr.items(), key=lambda item: item[1], reverse=True)
-    for i in arr:
-        res += f"{i[0]} : {i[1] / 60:.2f} минут\n"
+    arr = sorted(arr.items(), key=lambda item: item[1].get_elapsed_time(), reverse=True)
+    for name, process in arr:
+        res += f"{name} : {process.get_elapsed_time():.2f} минут\n"
     return res
 
 @dp.message(lambda message: message.text.lower() == "stop")
