@@ -10,7 +10,7 @@ class ProcessData:
         self.start_time = time.time()
         self.process_date = ""
 
-TOKEN = "YOUR_BOT_TOKEN"
+TOKEN = "7430942828:AAFX_RRZlXp7KsuTsyvCtS3V2n0HMVhf-_c"
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
