@@ -115,7 +115,7 @@ async def answer(message: types.Message):
         "*Доступные команды:*\n\n"
         "– */help*: показать этот список команд\n"
         "– */stop*: остановить текущий процесс и сохранить его\n"
-        "– */status*: показать сохранённые данные"
+        "– */status*: показать сохранённые данные\n"
         "– */edit  \\<имя процесса\\> \\<время\\>*: изменить время процесса\n"
         "– */delete\\_process \\<имя процесса\\>*: удалить данные о процессе\n"
         "– */clear\\_save* : удалить все сохранённые данные\n"  
@@ -152,13 +152,18 @@ async def answer(message: types.Message):
     user_id = message.from_user.id
     arr, current, history = read_save(user_id)
     splited_message = message.text.split()
-    if len(splited_message) != 3 or not splited_message[2].isdigit() or not splited_message[1]:
-        await message.answer("Неверный формат команды. Используйте: edit <имя процесса> <знак> <значение в минутах>")
+
+    if len(splited_message) != 3 or not splited_message[1]:
+        await message.answer("Неверный формат команды. Используйте: /edit <имя процесса> <значение в минутах>")
+        return
+    try:
+        value = int(splited_message[2])
+    except ValueError:
+        await message.answer("Неверный формат команды. Используйте: /edit <имя процесса> <значение в минутах>")
         return
 
     process_name = splited_message[1].lower()
-    value = splited_message[2]
-    arr[process_name] = arr.get(process_name, 0) + int(value) * 60
+    arr[process_name] = arr.get(process_name, 0) + value * 60
     edit_save(user_id, arr, current, history)
     await message.answer(f"{process_name} : {arr[process_name] / 60:.2f} минут\n")
 
